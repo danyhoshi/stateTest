@@ -1,120 +1,78 @@
-// import { useState } from "react";
-// import { sculptureList } from "./data.js";
+import { useReducer } from "react";
+import AddTask from "./AddTask.js";
+import TaskList from "./TaskList.js";
 
-// export default function Gallery() {
-//   const [index, setIndex] = useState(0);
-//   const [showMore, setShowMore] = useState(false);
+export default function TaskApp() {
+  const [tasks, dispatch] = useReducer(tasksReducer, initialTasks);
 
-//   function handleNextClick() {
-//     if (index < 11) {
-//       setIndex(index + 1);
-//     } else {
-//       return;
-//     }
-//   }
-
-//   function handleNextClickAn() {
-//     if (index > 0) {
-//       setIndex(index - 1);
-//     } else {
-//       return;
-//     }
-//   }
-
-//   function handleMoreClick() {
-//     setShowMore(!showMore);
-//   }
-
-//   let sculpture = sculptureList[index];
-//   return (
-//     <>
-//       <button onClick={handleNextClickAn}>Anterior</button>
-//       <button onClick={handleNextClick}>Siguiente</button>
-//       <h2>
-//         <i>{sculpture.name} </i>
-//         por {sculpture.artist}
-//       </h2>
-//       <h3>
-//         ({index + 1} de {sculptureList.length})
-//       </h3>
-//       <button onClick={handleMoreClick}>
-//         {showMore ? "Ocultar" : "Mostrar"} detalles
-//       </button>
-//       {showMore && <p>{sculpture.description}</p>}
-//       <img src={sculpture.url} alt={sculpture.alt} />
-//     </>
-//   );
-// }
-import { useState } from "react";
-
-const initialProducts = [
-  {
-    id: 0,
-    name: "Baklava",
-    count: 1,
-  },
-  {
-    id: 1,
-    name: "Queso",
-    count: 5,
-  },
-  {
-    id: 2,
-    name: "Espaguetis",
-    count: 2,
-  },
-];
-
-export default function ShoppingCart() {
-  const [products, setProducts] = useState(initialProducts);
-
-  function handleIncreaseClick(productId) {
-    setProducts(
-      products.map((product) =>
-        product.id === productId
-          ? { ...product, count: product.count + 1 }
-          : product
-      )
-    );
+  function handleAddTask(text) {
+    dispatch({
+      type: "added",
+      id: nextId++,
+      text: text,
+    });
   }
 
-  function handleDecreaseClick(productId) {
-    if (products.find((product) => product.id === productId).count > 1) {
-      setProducts(
-        products.map((product) =>
-          product.id === productId
-            ? { ...product, count: product.count - 1 }
-            : product
-        )
-      );
-    } else {
-      setProducts(
-        products.filter((product) => product.id != productId && product)
-      );
-    }
+  function handleChangeTask(task) {
+    dispatch({
+      type: "changed",
+      task: task,
+    });
+  }
+
+  function handleDeleteTask(taskId) {
+    dispatch({
+      type: "deleted",
+      id: taskId,
+    });
   }
 
   return (
-    <ul>
-      {products.map((product) => (
-        <li key={product.id}>
-          {product.name} (<b>{product.count}</b>)
-          <button
-            onClick={() => {
-              handleIncreaseClick(product.id);
-            }}
-          >
-            +
-          </button>
-          <button
-            onClick={() => {
-              handleDecreaseClick(product.id);
-            }}
-          >
-            –
-          </button>
-        </li>
-      ))}
-    </ul>
+    <>
+      <h1>Itinerario de Praga</h1>
+      <AddTask onAddTask={handleAddTask} />
+      <TaskList
+        tasks={tasks}
+        onChangeTask={handleChangeTask}
+        onDeleteTask={handleDeleteTask}
+      />
+    </>
   );
 }
+
+function tasksReducer(tasks, action) {
+  switch (action.type) {
+    case "added": {
+      return [
+        ...tasks,
+        {
+          id: action.id,
+          text: action.text,
+          done: false,
+        },
+      ];
+    }
+    case "changed": {
+      return tasks.map((t) => {
+        if (t.id === action.task.id) {
+          return action.task;
+        } else {
+          return t;
+        }
+      });
+    }
+    case "deleted": {
+      return tasks.filter((t) => t.id !== action.id);
+    }
+    default: {
+      throw Error("Unknown action: " + action.type);
+    }
+  }
+}
+
+let nextId = 3;
+const initialTasks = [
+  { id: 0, text: "Visitar el Museo Kafka", done: true },
+  { id: 1, text: "Ver espectáculo de títeres", done: false },
+  { id: 2, text: "Foto del muro de Lennon", done: false },
+];
