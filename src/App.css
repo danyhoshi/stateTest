@@ -4,12 +4,26 @@
   padding: 2rem;
   text-align: center;
 }
-
+.background--active {
+  background-color: aqua;
+}
 .logo {
   height: 6em;
   padding: 1.5em;
   will-change: filter;
   transition: filter 300ms;
+}
+.background {
+  position: relative;
+  width: 600px;
+  height: 600px;
+}
+.picture {
+  z-index: 999;
+}
+.picture--active {
+  border: 1px solid aqua;
+  border-radius: 5px;
 }
 .logo:hover {
   filter: drop-shadow(0 0 2em #646cffaa);
