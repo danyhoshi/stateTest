@@ -18,8 +18,9 @@
   width: 600px;
   height: 600px;
 }
-.highlighted {
+.selected {
   background-color: aqua;
+  color: #000;
 }
 .picture {
   z-index: 999;
