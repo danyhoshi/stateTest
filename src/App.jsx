@@ -1,28 +1,44 @@
 import { useState } from "react";
+import { initialLetters } from "./dataLetter.js";
+import Letter from "./Letter.jsx";
 import "./App.css";
-export default function Picture() {
-  const [classBack, setClassBack] = useState(true);
+export default function MailClient() {
+  const [letters, setLetters] = useState(initialLetters);
+  const [highlightedId, setHighlightedId] = useState(null);
 
-  const pic = !classBack && "picture--active";
-  const back = classBack && "background--active";
+  function handleHover(letterId) {
+    setHighlightedId(letterId);
+  }
 
-  function handleClickImg(e) {
-    e.stopPropagation();
-    console.log("Click img");
-    setClassBack(false);
+  function handleStar(starredId) {
+    setLetters(
+      letters.map((letter) => {
+        if (letter.id === starredId) {
+          return {
+            ...letter,
+            isStarred: !letter.isStarred,
+          };
+        } else {
+          return letter;
+        }
+      })
+    );
   }
-  function handleClickDiv() {
-    console.log("Click div");
-    setClassBack(true);
-  }
+
   return (
-    <div className={`background ${back}`} onClick={handleClickDiv}>
-      <img
-        className={`picture ${pic}`}
-        alt="Casas de arcoiris en Kampung Pelangi, Indonesia"
-        src="https://i.imgur.com/5qwVYb1.jpeg"
-        onClick={(e) => handleClickImg(e)}
-      />
-    </div>
+    <>
+      <h2>Buzón de entrada</h2>
+      <ul>
+        {letters.map((letter) => (
+          <Letter
+            key={letter.id}
+            letter={letter}
+            isHighlighted={letter.id === highlightedId}
+            onHover={handleHover}
+            onToggleStar={handleStar}
+          />
+        ))}
+      </ul>
+    </>
   );
 }
