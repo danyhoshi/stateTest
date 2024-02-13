@@ -3,37 +3,42 @@ import { initialLetters as letters } from "./dataLetter.js";
 import Letter from "./Letter.jsx";
 import "./App.css";
 
-export default function MailClient() {
-  const [selectedId, setSelectedId] = useState(new Set());
+export default function App() {
+  const [isPaused, setIsPaused] = useState(false);
+  return (
+    <div>
+      {isPaused ? <p>¡Nos vemos luego!</p> : <Counter />}
+      <label>
+        <input
+          type="checkbox"
+          checked={isPaused}
+          onChange={(e) => {
+            setIsPaused(e.target.checked);
+          }}
+        />
+        Tómate un descanso
+      </label>
+    </div>
+  );
+}
 
-  function handleToggle(toggledId) {
-    // TODO: permitir selección múltiple
-    const newSelected = new Set(selectedId);
-    if (!selectedId.has(toggledId)) {
-      newSelected.add(toggledId);
-    } else {
-      newSelected.delete(toggledId);
-    }
-    setSelectedId(newSelected);
+function Counter() {
+  const [score, setScore] = useState(0);
+  const [hover, setHover] = useState(false);
+
+  let className = "counter";
+  if (hover) {
+    className += " hover";
   }
 
   return (
-    <>
-      <h2>Buzón de entrada</h2>
-      <ul>
-        {letters.map((letter) => (
-          <Letter
-            key={letter.id}
-            letter={letter}
-            isSelected={selectedId}
-            onToggle={handleToggle}
-          />
-        ))}
-        <hr />
-        <p>
-          <b>Has seleccionado {selectedId.size} cartas</b>
-        </p>
-      </ul>
-    </>
+    <div
+      className={className}
+      onPointerEnter={() => setHover(true)}
+      onPointerLeave={() => setHover(false)}
+    >
+      <h1>{score}</h1>
+      <button onClick={() => setScore(score + 1)}>Agregar uno</button>
+    </div>
   );
 }
