@@ -1,40 +1,31 @@
-import { useState } from "react";
-import { initialLetters as letters } from "./dataLetter.js";
-import Letter from "./Letter.jsx";
-import "./App.css";
+import { useReducer } from "react";
+import Chat from "./Chat";
+import ContactList from "./ContactList";
+import { initialState, messengerReducer } from "./messengerReducer";
 
-export default function App() {
-  const [showHint, setShowHint] = useState(false);
+export default function Messenger() {
+  const [state, dispatch] = useReducer(messengerReducer, initialState);
+  const message = state.message;
+  const contact = contacts.find((c) => c.id === state.selectedId);
   return (
     <div>
-      {showHint && (
-        <p>
-          <i>Pista: ¿Tu ciudad favorita?</i>
-        </p>
-      )}
-      <Form />
-      {showHint ? (
-        <button
-          onClick={() => {
-            setShowHint(false);
-          }}
-        >
-          Ocultar pista
-        </button>
-      ) : (
-        <button
-          onClick={() => {
-            setShowHint(true);
-          }}
-        >
-          Mostrar pista
-        </button>
-      )}
+      <ContactList
+        contacts={contacts}
+        selectedId={state.selectedId}
+        dispatch={dispatch}
+      />
+      <Chat
+        key={contact.id}
+        message={message}
+        contact={contact}
+        dispatch={dispatch}
+      />
     </div>
   );
 }
 
-function Form() {
-  const [text, setText] = useState("");
-  return <textarea value={text} onChange={(e) => setText(e.target.value)} />;
-}
+const contacts = [
+  { id: 0, name: "Taylor", email: "taylor@mail.com" },
+  { id: 1, name: "Alice", email: "alice@mail.com" },
+  { id: 2, name: "Bob", email: "bob@mail.com" },
+];
