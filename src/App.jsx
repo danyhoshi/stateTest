@@ -1,42 +1,61 @@
-import Heading from "./Heading";
-import Section from "./Section";
+import { useState, useContext } from "react";
+import { places } from "./dataImg.js";
+import { getImageUrl } from "./utils.js";
+import { ImageSizeContext } from "./Context.jsx";
 
-export default function ProfilePage() {
+export default function App() {
+  const [isLarge, setIsLarge] = useState(false);
+  // changeImage(isLarge);
+  const imageSize = isLarge ? 150 : 100;
   return (
-    <Section>
-      <Heading>Mi perfil</Heading>
-      <Post title="¡Hola viajero!" body="Lee sobre mis aventuras." />
-      <AllPosts />
-    </Section>
+    <>
+      <ImageSizeContext.Provider value={imageSize}>
+        <label>
+          <input
+            type="checkbox"
+            checked={isLarge}
+            onChange={(e) => {
+              setIsLarge(e.target.checked);
+            }}
+          />
+          Usa imágenes grandes
+        </label>
+        <hr />
+        <List />
+      </ImageSizeContext.Provider>
+    </>
   );
 }
 
-function AllPosts() {
-  return (
-    <Section>
-      <Heading>Publicaciones</Heading>
-      <RecentPosts />
-    </Section>
-  );
+function List() {
+  const listItems = places.map((place) => (
+    <li key={place.id}>
+      <Place place={place} />
+    </li>
+  ));
+  return <ul>{listItems}</ul>;
 }
 
-function RecentPosts() {
+function Place({ place }) {
   return (
-    <Section>
-      <Heading>Publicaciones recientes</Heading>
-      <Post title="Sabores de Lisboa" body="¡...esos pastéis de nata!" />
-      <Post title="Buenos Aires a ritmo de tango" body="¡Me encantó!" />
-    </Section>
-  );
-}
-
-function Post({ title, body }) {
-  return (
-    <Section isFancy={true}>
-      <Heading>{title}</Heading>
+    <>
+      <PlaceImage place={place} />
       <p>
-        <i>{body}</i>
+        <b>{place.name}</b>
+        {": " + place.description}
       </p>
-    </Section>
+    </>
+  );
+}
+
+function PlaceImage({ place }) {
+  const imageSize = useContext(ImageSizeContext);
+  return (
+    <img
+      src={getImageUrl(place)}
+      alt={place.name}
+      width={imageSize}
+      height={imageSize}
+    />
   );
 }
