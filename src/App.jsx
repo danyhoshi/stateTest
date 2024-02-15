@@ -1,34 +1,66 @@
-import { useRef, useState } from "react";
+import { useRef } from "react";
+import "./App.css";
+export default function CatFriends() {
+  const firstCatRef = useRef(null);
+  const secondCatRef = useRef(null);
+  const thirdCatRef = useRef(null);
 
-export default function Chat() {
-  const [text, setText] = useState("");
-  const [isSending, setIsSending] = useState(false);
-  const timeoutID = useRef(null);
-
-  function handleSend() {
-    setIsSending(true);
-    timeoutID.current = setTimeout(() => {
-      alert("¡Enviado!");
-      setIsSending(false);
-    }, 3000);
+  function handleScrollToFirstCat() {
+    firstCatRef.current.scrollIntoView({
+      behavior: "smooth",
+      block: "nearest",
+      inline: "center",
+    });
   }
 
-  function handleUndo() {
-    setIsSending(false);
-    clearTimeout(timeoutID.current);
+  function handleScrollToSecondCat() {
+    secondCatRef.current.scrollIntoView({
+      behavior: "smooth",
+      block: "nearest",
+      inline: "center",
+    });
+  }
+
+  function handleScrollToThirdCat() {
+    thirdCatRef.current.scrollIntoView({
+      behavior: "smooth",
+      block: "nearest",
+      inline: "center",
+    });
   }
 
   return (
     <>
-      <input
-        disabled={isSending}
-        value={text}
-        onChange={(e) => setText(e.target.value)}
-      />
-      <button disabled={isSending} onClick={handleSend}>
-        {isSending ? "Enviando..." : "Enviar"}
-      </button>
-      {isSending && <button onClick={handleUndo}>Deshacer</button>}
+      <nav>
+        <button onClick={handleScrollToFirstCat}>Tom</button>
+        <button onClick={handleScrollToSecondCat}>Maru</button>
+        <button onClick={handleScrollToThirdCat}>Jellylorum</button>
+      </nav>
+      <div>
+        <ul>
+          <li>
+            <img
+              src="https://placekitten.com/g/200/200"
+              alt="Tom"
+              ref={firstCatRef}
+            />
+          </li>
+          <li>
+            <img
+              src="https://placekitten.com/g/300/200"
+              alt="Maru"
+              ref={secondCatRef}
+            />
+          </li>
+          <li>
+            <img
+              src="https://placekitten.com/g/250/200"
+              alt="Jellylorum"
+              ref={thirdCatRef}
+            />
+          </li>
+        </ul>
+      </div>
     </>
   );
 }
